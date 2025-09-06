@@ -9,8 +9,6 @@ import movie from "./routes/movie.router";
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-import cors, { type CorsOptions } from "cors";
-
 const allowedOrigins = (process.env.CORS_ORIGINS ?? "http://localhost:5173,http://localhost:5174")
   .split(",")
   .map(o => o.trim())
