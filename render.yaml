@@ -1,0 +1,33 @@
+# render.yaml
+databases:
+  - name: kodigital-db
+    plan: free
+
+services:
+  - type: web
+    name: kodigital-server
+    env: node
+    plan: free
+    region: frankfurt   # pick nearest (frankfurt, oregon, dublin, etc.)
+    buildCommand: "npm ci && npm run build"
+    startCommand: "npm start"
+    postDeployCommand: "npm run migrate"
+    autoDeploy: true
+    healthCheckPath: "/api/health"
+    envVars:
+      - key: NODE_ENV
+        value: production
+
+      # Provided automatically by Render from the managed database above:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: kodigital-db
+          property: connectionString
+
+      # Required by pg if SSL is enforced on Render DB
+      - key: PGSSLMODE
+        value: require
+
+      # Your frontend origins (CORS)
+      - key: CORS_ORIGINS
+        value: "https://nikita1917s.github.io/KoDigital-front/"
