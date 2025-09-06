@@ -30,4 +30,4 @@ services:
 
       # Your frontend origins (CORS)
       - key: CORS_ORIGINS
-        value: "https://nikita1917s.github.io/KoDigital-front/"
+        value: "https://nikita1917s.github.io"
