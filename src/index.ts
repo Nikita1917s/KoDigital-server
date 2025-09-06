@@ -9,26 +9,24 @@ import movie from "./routes/movie.router";
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-const allowedOrigins = (
-  process.env.CORS_ORIGINS ?? "http://localhost:5173,http://localhost:5174"
-)
+import cors, { type CorsOptions } from "cors";
+
+const allowedOrigins = (process.env.CORS_ORIGINS ?? "http://localhost:5173,http://localhost:5174")
   .split(",")
-  .map((o) => o.trim())
+  .map(o => o.trim())
   .filter(Boolean);
 
 console.log("Allowed origins:", allowedOrigins);
 
 const corsOptions: CorsOptions = {
   origin(origin, callback) {
-    // Allow requests without Origin (curl, health checks, etc.)
-    if (!origin) return callback(null, true);
-
+    if (!origin) {
+      return callback(null, true);
+    }
     if (allowedOrigins.includes(origin)) {
       return callback(null, true);
     }
-
-    console.warn("Blocked by CORS:", origin);
-    return callback(new Error("Not allowed by CORS"));
+    return callback(new Error(`Not allowed by CORS: ${origin}`));
   },
   credentials: true,
 };
