@@ -14,26 +14,21 @@ const allowedOrigins = (process.env.CORS_ORIGINS ?? "http://localhost:5173,http:
   .map(o => o.trim())
   .filter(Boolean);
 
-console.log("Allowed origins:", allowedOrigins);
-
 const corsOptions: CorsOptions = {
-  origin(origin, callback) {
-    if (!origin) {
-      return callback(null, true);
-    }
-    if (allowedOrigins.includes(origin)) {
-      return callback(null, true);
-    }
-    return callback(new Error(`Not allowed by CORS: ${origin}`));
+  origin(origin, cb) {
+    if (!origin) return cb(null, true);
+    if (allowedOrigins.includes(origin)) return cb(null, true);
+    cb(new Error(`Not allowed by CORS: ${origin}`));
   },
   credentials: true,
 };
 
+app.use(morgan("dev"));
 app.use(cors(corsOptions));
-app.options("*", cors(corsOptions));
+
+app.use(express.json());
 
 app.use(morgan("dev"));
-app.use(express.json());
 
 app.use("/api/movie", movie);
 app.use("/api/search", search);
@@ -46,6 +41,7 @@ app.get("/api/health", (_, res) => {
 if (process.env.NODE_ENV !== "test") {
   app.listen(PORT, () => {
     console.log(`API listening on port ${PORT}`);
+    console.log("Allowed origins:", allowedOrigins);
   });
 }
 
